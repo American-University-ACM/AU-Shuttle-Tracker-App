@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/blank" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+       <LinearLayout
+        android:id="@+id/mapLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+         <TextView
+             android:id="@+id/outline1"
+             android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             android:text="Small Text"
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <com.google.android.maps.MapView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/mapview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.41"
+            android:apiKey="0lKF9mLB_SrR4bIFqO_NMlFivpjqjFCJP0Dy73g"
+            android:clickable="true" />
+
+        <TextView
+            android:id="@+id/outline2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="241dp"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/stopsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/stops" />
+
+            <ImageButton
+                android:id="@+id/nearbyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/nearby" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageButton
+                    android:id="@+id/switchRouteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onSwitchRouteButtonClick"
+                    android:src="@drawable/bluebus" />
+
+                <ImageButton
+                    android:id="@+id/showAllRouteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="showAllRoutes"
+                    android:src="@drawable/blueredbus" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

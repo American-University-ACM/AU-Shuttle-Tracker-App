@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <color
+      name="transparent">#00000000</color>
+
+   <!-- colors used in application -->
+   <color
+      name="Black">#000000</color>
+   <color
+      name="DkRed">#660000</color>
+   <color
+      name="Red">#b70101</color>
+   <color
+      name="White">#f7f5e8</color>
+   <color
+      name="Silver">#c8c5bb</color>
+   <color
+      name="Gray">#6e6a5b</color>
+   <color
+      name="Yellow">#f6f900</color>
+   <color
+      name="Orange">#ff9000</color>
+   <color
+      name="LightGreen">#00ff00</color>
+   <color
+      name="Green">#085c00</color>
+   <color
+      name="Gold">#ccaf00</color>
+   <color
+      name="LightBlue">#0077ff</color>
+   <color
+      name="Blue">#000077</color>
+   <color
+      name="LightCyan">#00ffff</color>
+   <color
+      name="Cyan">#007777</color>
+
+</resources>
