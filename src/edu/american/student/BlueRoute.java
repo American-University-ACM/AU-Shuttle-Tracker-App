@@ -2,7 +2,6 @@ package edu.american.student;
 
 import java.util.ArrayList;
 
-import android.util.Log;
 
 import edu.american.student.util.LatLonPair;
 import edu.american.student.util.LatLonPoint;

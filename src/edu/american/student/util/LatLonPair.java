@@ -1,6 +1,5 @@
 package edu.american.student.util;
 
-import com.google.android.maps.GeoPoint;
 
 
 

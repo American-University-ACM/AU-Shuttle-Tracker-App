@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -28,21 +27,14 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * This is the main activity that starts when the icon is clicked
@@ -94,8 +86,8 @@ public class AUBusTrackerActivity extends MapActivity
         try 
         {
 			runBusLocationListener();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
     }
@@ -186,12 +178,10 @@ public class AUBusTrackerActivity extends MapActivity
 					long arg3)
 			{
 				//doesnt understand the shared routes
-				Log.e("onItemClick",arg2+"");
 				String a = (String)arg0.getItemAtPosition(arg2);
 				try
 				{
 					a=a.split(": ")[1];
-					Log.e("new a",a);
 				}catch(Exception e)
 				{
 					
@@ -452,7 +442,6 @@ public class AUBusTrackerActivity extends MapActivity
 		// Define a listener that responds to location updates
 		locationListener = new LocationListener() {
 		    public void onLocationChanged(Location location) {
-		    	Log.e("LOC","obtained");
 		    	Toast.makeText(context, "hello", 5);
 		    	loc = location;
 		    	clientLocation = new LatLonPoint (loc.getLatitude(),loc.getLongitude());
@@ -556,12 +545,11 @@ public class AUBusTrackerActivity extends MapActivity
 						}
 						for(int i=0;i<busXMLResponses2.size();i++)
 						{
-							Log.e("JAMES SERVER",busXMLResponses2.get(i));
+							//Log.e("JAMES SERVER",busXMLResponses2.get(i));
 						}
 						handler.sendEmptyMessage(UPDATE_BUS_ICONS);
 						wait(120000);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -790,7 +778,6 @@ public class AUBusTrackerActivity extends MapActivity
 							else if (isNextList[NAME_NEXT])
 							{
 								name=line;
-								Log.e("name",name);
 								for(int j=0;j<isNextList.length;j++)
 								{
 									int index =toCheckList[j];
@@ -800,7 +787,6 @@ public class AUBusTrackerActivity extends MapActivity
 							else if (isNextList[SPEED_NEXT])
 							{
 								speed=line;
-								Log.e("speed",speed);
 								for(int j=0;j<isNextList.length;j++)
 								{
 									int index =toCheckList[j];
@@ -810,7 +796,6 @@ public class AUBusTrackerActivity extends MapActivity
 							else if (isNextList[STATUS_NEXT])
 							{
 								status=line;
-								Log.e("status",status);
 								for(int j=0;j<isNextList.length;j++)
 								{
 									int index =toCheckList[j];
@@ -943,7 +928,7 @@ public class AUBusTrackerActivity extends MapActivity
 						if(isCloseToRoute(busLocation))
 						{
 							int busIconID= R.drawable.blueredbus_small;
-							boolean knownRoute = false;
+							//boolean knownRoute = false;
 							for(int j=0;j<busesOnRoutes.size();j++)
 							{
 								String busName=busesOnRoutes.get(j).replace("r", "").replace("b", "");
@@ -1091,7 +1076,6 @@ public class AUBusTrackerActivity extends MapActivity
 		while(in.hasNext())
 		{
 			String next = in.next();
-			Log.e("next",next);
 			toReturn+=next+" ";
 		}
 		in = new Scanner(toReturn);
@@ -1199,7 +1183,6 @@ public class AUBusTrackerActivity extends MapActivity
 	 */
 	protected boolean isRouteDisplayed() 
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

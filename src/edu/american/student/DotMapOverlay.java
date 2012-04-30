@@ -13,6 +13,7 @@ import com.google.android.maps.OverlayItem;
  * @author Cam Cook
  *
  */
+@SuppressWarnings("unchecked")
 public class DotMapOverlay extends com.google.android.maps.ItemizedOverlay
 {
 
