@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, AUBusTrackerActivity!</string>
-    <string name="app_name">AUBusTracker</string>
+    <string name="app_name">AU Shuttle Tracker</string>
     <string name="blank"></string>
 
 </resources>

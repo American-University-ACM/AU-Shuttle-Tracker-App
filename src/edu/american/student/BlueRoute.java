@@ -2,6 +2,8 @@ package edu.american.student;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import edu.american.student.util.LatLonPair;
 import edu.american.student.util.LatLonPoint;
 
@@ -27,6 +29,31 @@ public class BlueRoute
 			toReturn.add(new LatLonPair(route.get(i-1),route.get(i)));
 		}
 		return toReturn;
+	}
+	public LatLonPoint getBusFromInfo(String info)
+	{
+
+		int[] returnVals = new int[busStopInfo.size()];
+		
+		for(int i=0;i<busStopInfo.size();i++)
+		{
+			returnVals[i]=stringCompare(busStopInfo.get(i),info);
+		}
+		int smallestIndex =-1;
+		int smallestVal = 1000000;
+		for(int i=0;i<returnVals.length;i++)
+		{
+			if(returnVals[i]<smallestVal && returnVals[i]<5)
+			{
+				smallestIndex=i;
+				smallestVal = returnVals[i];
+			}
+		}
+		if(smallestIndex ==-1)
+		{
+			return null;
+		}
+		return stops.get(smallestIndex);
 	}
 	private void createBusStops()
 	{
@@ -259,5 +286,36 @@ public class BlueRoute
 	public ArrayList<LatLonPoint> returnBusStops()
 	{
 		return stops;
+	}
+	
+	public int stringCompare(String a, String b)
+	{
+		Log.e("size a",a.length()+"");
+		Log.e("size b",b.length()+"");
+		char[] aArr = a.toCharArray();
+		char[] bArr = b.toCharArray();
+	
+		int returnVal =0;
+		if(aArr.length<= bArr.length)
+		{
+			for(int i=0;i<aArr.length;i++)
+			{
+				if(aArr[i] != bArr[i])
+				{
+					returnVal++;
+				}
+			}
+		}
+		else
+		{
+			for(int i=0;i<bArr.length;i++)
+			{
+				if(aArr[i] != bArr[i])
+				{
+					returnVal++;
+				}
+			}
+		}
+		return returnVal;
 	}
 }

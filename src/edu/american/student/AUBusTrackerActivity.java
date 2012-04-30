@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -30,6 +31,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -37,11 +40,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class AUBusTrackerActivity extends MapActivity 
 {
 	private boolean jamesServer=false;
-	public LatLonPoint clientLocation = null;
+	public LatLonPoint clientLocation ;
 	private Location loc;
 	private LocationListener locationListener;
 	private LocationManager locationManager;
@@ -55,11 +61,13 @@ public class AUBusTrackerActivity extends MapActivity
 	private ShareRoute sRoute = new ShareRoute();
 	private final int UPDATE_BUS_ICONS= 0;
 	private final int UPDATE_USER_ICON =1;
-	private final int DISTANCE_THRESHOLD =600;
+	private final int DISTANCE_THRESHOLD =550;
 	private String ROUTE_SHOWN="blue";
 	private boolean displayRedRoute =true;
 	private boolean displayBlueRoute = true;
 	private Context context;
+	private MapView mapView;
+	private Dialog dialog;
 	
     /** Called when the activity is first created. */
     @Override
@@ -147,10 +155,64 @@ public class AUBusTrackerActivity extends MapActivity
 					"Red Route: Yuma St. (Metrobus stop at 49th and Yuma Sts.)"};
     	}
     	ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringArray);
-    	modeList.setAdapter(modeAdapter);
+    	modeList.setOnItemClickListener(new OnItemClickListener(){
 
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3)
+			{
+				//doesnt understand the shared routes
+				Log.e("onItemClick",arg2+"");
+				String a = (String)arg0.getItemAtPosition(arg2);
+				try
+				{
+					a=a.split(": ")[1];
+					Log.e("new a",a);
+				}catch(Exception e)
+				{
+					
+				}
+				LatLonPoint routePoint=sRoute.getBusFromInfo(a);
+				if(displayRedRoute && !displayBlueRoute)
+				{
+					if(routePoint == null)
+					{
+						routePoint=rRoute.getBusFromInfo(a);
+					}
+				}
+				if(displayBlueRoute && !displayRedRoute)
+				{
+					if(routePoint == null)
+					{
+						routePoint=bRoute.getBusFromInfo(a);
+					}
+				}
+				if(displayBlueRoute && displayRedRoute)
+				{
+					if(routePoint ==null)
+					{
+						
+						routePoint = bRoute.getBusFromInfo(a);
+					}
+					if(routePoint == null)
+					{
+						routePoint= rRoute.getBusFromInfo(a);
+					}
+				}
+
+				if(routePoint != null)
+				{
+		        	MapController mapController = mapView.getController();
+		        	mapController.setCenter(routePoint);
+		        	dialog.dismiss();
+				}
+
+				
+			}});
+    	modeList.setAdapter(modeAdapter);
     	builder.setView(modeList);
-    	final Dialog dialog = builder.create();
+
+    	dialog = builder.create();
 
     	dialog.show();
 
@@ -158,19 +220,155 @@ public class AUBusTrackerActivity extends MapActivity
     }
     public void displayAbout(View v)
     {
-    	
+		AlertDialog.Builder adb= new AlertDialog.Builder(this);
+		adb.setMessage("AU Shuttle Tracker\n" +
+				"\n" +
+				"Made by :\n" +
+				"\tAmerican University Association for Computing Machinery Team\n\n" +
+				"Android Development:\n" +
+				"\tCameron Cook (CS '13) \n" +
+				"\t\tcam.cook@linux.com\n\n" +
+				"Server-side Development:\n"  +
+				"\tJames Matthews (CS '14) \n" +
+				"\t\tjfmatt8067@gmail.com\n\n" +
+				"Graphic Design:\n" +
+				"\tAlly Palanzi (Graphic Design/CS '14) \n" +
+				"\t\tap4332b@student.american.edu\n\n" +
+				"\tUna Kravets (Graphic Design/CS '14) \n" +
+				"\t\tuk1522a@student.american.edu\n\n" +
+				"License:\n" +
+				"\tAndroid App- GNU Public License v2 (open source)\n" +
+				"\tServer-side- GNU Public License v2 (open source)\n" +
+				"\tIcons/Graphics- Creative Commons Share-alike License (copyleft, noncommerical)\n\n" +
+				"Code:\n" +
+				"\tGitHub: https://github.com/Ccook/AU-Shuttle-Tracker-App/");
+		adb.setTitle("About AU Shuttle Tracker");
+		adb.setPositiveButton("OK", null);
+		adb.show();
     }
+    private Location getLocation() 
+    {
+
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+            
+            return loc;
+    }
+
     public void displayNearby(View v)
     {
-    	
+    	try
+    	{
+    		loc=getLocation();
+    		clientLocation  = new LatLonPoint(loc.getLatitude(),loc.getLongitude());
+    	}catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    	if(clientLocation==null)
+    	{
+    		AlertDialog.Builder adb= new AlertDialog.Builder(this);
+    		adb.setMessage("Your location was not found (Is GPS disabled?)");
+    		adb.setTitle("Error!");
+    		adb.setPositiveButton("OK", null);
+    		adb.show();
+    	}
+    	else
+    	{
+    		MapView mapview = (MapView)this.findViewById(R.id.mapview);
+        	MapController mapController = mapview.getController();
+        	//mapController.setCenter(clientLocation);
+        	//GeoPoint stopCenter = getNearestStop();
+        	ArrayList<String> nearestStops = getNearestStops();
+        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        	builder.setTitle("Select A Stop");
+
+        	ListView modeList = new ListView(this);
+        	String[] stringArray = new String[nearestStops.size()];
+        	for(int i=0;i<nearestStops.size();i++)
+        	{
+        		stringArray[i]=nearestStops.get(i);
+        	}
+        
+        	ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringArray);
+        	modeList.setAdapter(modeAdapter);
+
+        	builder.setView(modeList);
+        	final Dialog dialog = builder.create();
+
+        	dialog.show();
+
+        	
+    	}
     }
+    
+	private ArrayList<String> getNearestStops() 
+	{
+		int max = 1000;
+		int latMax= clientLocation.getLatitudeE6()+max;
+		int latMin= clientLocation.getLatitudeE6() -max;
+		int longMax= clientLocation.getLongitudeE6()+max;
+		int longMin= clientLocation.getLongitudeE6()-max;
+		
+		ArrayList<String> toReturn = new ArrayList<String>();
+		
+		if(displayBlueRoute)
+		{
+			ArrayList<LatLonPoint> stops= bRoute.returnBusStops();
+			for(int i=0;i<stops.size();i++)
+			{
+				LatLonPoint indexed= stops.get(i);
+				if(indexed.getLatitudeE6()>=latMin
+				  && indexed.getLatitudeE6() <=latMax
+				  && indexed.getLongitudeE6() >= longMin
+				  && indexed.getLongitudeE6() <= longMax)
+				{
+					toReturn.add(bRoute.getBusInfo(indexed));
+				}
+				
+			}
+		}
+		if(displayRedRoute)
+		{
+			ArrayList<LatLonPoint> stops= rRoute.returnBusStops();
+			for(int i=0;i<stops.size();i++)
+			{
+				LatLonPoint indexed= stops.get(i);
+				if(indexed.getLatitudeE6()>=latMin
+				  && indexed.getLatitudeE6() <=latMax
+				  && indexed.getLongitudeE6() >= longMin
+				  && indexed.getLongitudeE6() <= longMax)
+				{
+					toReturn.add(bRoute.getBusInfo(indexed));
+				}
+				
+			}
+		}
+		ArrayList<LatLonPoint> stops= sRoute.returnBusStops();
+		for(int i=0;i<stops.size();i++)
+		{
+			LatLonPoint indexed= stops.get(i);
+			if(indexed.getLatitudeE6()>=latMin
+			  && indexed.getLatitudeE6() <=latMax
+			  && indexed.getLongitudeE6() >= longMin
+			  && indexed.getLongitudeE6() <= longMax)
+			{
+				toReturn.add(bRoute.getBusInfo(indexed));
+			}
+			
+		}
+		
+		return toReturn;
+	}
+
 	private void setupMenuBar() 
 	{
       	setUpGrad(R.id.imageView1,0xFEC4C3C5,0xFF616261);
-      	setUpGrad(R.id.main,0xFF616261,0xFF131313);
-      	setUpGrad(R.id.outline3,0xFF616261,0xFF131313);
-      	setUpGrad(R.id.outline4,0xFF616261,0xFF131313);
-
+      	setUpGrad(R.id.main,0xFF616261,0xFF696969);
+      //	setUpGrad(R.id.outline3,0xFF616261,0xFF131313);
+      	setUpGrad(R.id.outline3,0xFF616261,0xFF696969);
+      //	setUpGrad(R.id.outline4,0xFF616261,0xFF131313);
+      	setUpGrad(R.id.outline4,0xFF616261,0xFF696969);
 		TextView outline1 = (TextView) this.findViewById(R.id.outline1);
 		outline1.setBackgroundColor(Color.BLUE);
 		TextView outline2 = (TextView) this.findViewById(R.id.outline2);
@@ -199,9 +397,11 @@ public class AUBusTrackerActivity extends MapActivity
 		// Define a listener that responds to location updates
 		locationListener = new LocationListener() {
 		    public void onLocationChanged(Location location) {
+		    	Log.e("LOC","obtained");
+		    	Toast.makeText(context, "hello", 5);
 		    	loc = location;
 		    	clientLocation = new LatLonPoint (loc.getLatitude(),loc.getLongitude());
-		    	handler.sendEmptyMessage(UPDATE_USER_ICON);
+		    	//handler.sendEmptyMessage(UPDATE_USER_ICON);
 		    }
 
 		    public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -226,15 +426,11 @@ public class AUBusTrackerActivity extends MapActivity
 			displayBlueRoute =false;
 			ROUTE_SHOWN="red";
 			ImageButton imgButton = (ImageButton)this.findViewById(R.id.switchRouteButton);
-			imgButton.setImageResource(R.drawable.redbus);
+			imgButton.setImageResource(R.drawable.bluebus);
 			TextView outline1 = (TextView) this.findViewById(R.id.outline1);
 			outline1.setBackgroundColor(Color.RED);
 			TextView outline2 = (TextView) this.findViewById(R.id.outline2);
-			outline2.setBackgroundColor(Color.RED);/*
-			TextView outline5 = (TextView) this.findViewById(R.id.outline5);
-			outline5.setBackgroundColor(Color.RED);
-			TextView outline6 = (TextView) this.findViewById(R.id.outline6);
-			outline6.setBackgroundColor(Color.RED);*/
+			outline2.setBackgroundColor(Color.RED);
 		}
 		else if (ROUTE_SHOWN.equals("red"))
 		{
@@ -243,7 +439,7 @@ public class AUBusTrackerActivity extends MapActivity
 			displayBlueRoute =true;
 			ROUTE_SHOWN = "blue";
 			ImageButton imgButton = (ImageButton)this.findViewById(R.id.switchRouteButton);
-			imgButton.setImageResource(R.drawable.bluebus);
+			imgButton.setImageResource(R.drawable.redbus);
 			TextView outline1 = (TextView) this.findViewById(R.id.outline1);
 			outline1.setBackgroundColor(Color.BLUE);
 			TextView outline2 = (TextView) this.findViewById(R.id.outline2);
@@ -258,7 +454,6 @@ public class AUBusTrackerActivity extends MapActivity
 	}
 	public void showAllRoutes(View v)
 	{
-		//ImageButton imgButton = (ImageButton)this.findViewById(R.id.showAllRouteButton);
 		displayRedRoute =true;
 		displayBlueRoute = true;
 		TextView outline1 = (TextView) this.findViewById(R.id.outline1);
@@ -284,6 +479,7 @@ public class AUBusTrackerActivity extends MapActivity
 						httpObject = new HTTPObject();
 						try{
 							busXMLResponses2 = httpObject.update2();
+							busXMLResponses=httpObject.update();
 							jamesServer=true;
 							}
 						catch(Exception e)
@@ -320,11 +516,11 @@ public class AUBusTrackerActivity extends MapActivity
 
 	private void setupMapView() 
 	{
-		MapView mapView = (MapView) findViewById(R.id.mapview);
+		mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
     	MapController mapController = mapView.getController();
     	mapController.setCenter(bRoute.returnRoute().get(0).getStart());
-        mapController.setZoom(16);
+        mapController.setZoom(18);
         
         drawPath(bRoute.returnRoute(),Color.BLUE);
         drawBusStops(bRoute.returnBusStops(),Color.BLUE);
@@ -417,6 +613,7 @@ public class AUBusTrackerActivity extends MapActivity
 		{
 			if(msg.what ==UPDATE_BUS_ICONS)
 			{
+				jamesServer=false;
 				int ADDRESS_NEXT=0;
 				int TIME_CHECKED_NEXT =1;
 				int LAT_NEXT =2;
@@ -428,7 +625,6 @@ public class AUBusTrackerActivity extends MapActivity
 				clearOverlays(displayRedRoute,displayBlueRoute);
 				if(!jamesServer)
 				{
-					
 					for(int i=0;i<busXMLResponses.size();i++)
 					{
 						String XMLResponse= busXMLResponses.get(i);
@@ -669,14 +865,15 @@ public class AUBusTrackerActivity extends MapActivity
 							}
 
 							
-							addMapPoint(busLocation,context.getResources().getDrawable(busIconID),"BUS",message);
+							addMapPoint(busLocation,context.getResources().getDrawable(busIconID),"BUS",message);	
+
 							
-				}
-				
-
+						}
 					}
+					
 				}
 
+						
 			}
 			else if (msg.what== UPDATE_USER_ICON)
 			{
@@ -860,42 +1057,7 @@ public class AUBusTrackerActivity extends MapActivity
 		}
 		return toReturnString;
 	}
-	
-	private boolean hasStation(String line)
-	{
-		String[] stops= new String[]{
-				"Bethesda",
-				"Friendship Heights",
-				"Grosvenor-Strathmore",
-				"Medical Center",
-				"Shady Grove",
-				"Twinbrook",
-				"White Flint",
-				"Brookland-CUA",
-				"Cleveland Park",
-				"Dupont Circle",
-				"Farragut North",
-				"Gallery Pl-Chinatown",
-				"Glenmont",
-				"Judiciary Square",
-				"Metro Center",
-				"New York Ave-Florida Ave-Gallaudet U",
-				"Rhode Island Ave-Brentwood",
-				"Union Station",
-				"Van Ness-UDC",
-				"Woodley Park-Zoo/Adams Morgan"};
-		for(int i=0;i<stops.length;i++)
-		{
-			if(line.contains(stops[i]))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
 
-	
-	
 	public boolean isNumber(String toTest)
 	{
 		try

@@ -2,6 +2,8 @@ package edu.american.student;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import edu.american.student.util.LatLonPair;
 import edu.american.student.util.LatLonPoint;
 
@@ -16,6 +18,32 @@ public class RedRoute
 	{
 		createRoute();
 		createBusStops();
+	}
+	
+	
+	public LatLonPoint getBusFromInfo(String info)
+	{
+		int[] returnVals = new int[busStopInfo.size()];
+		
+		for(int i=0;i<busStopInfo.size();i++)
+		{
+			returnVals[i]=stringCompare(busStopInfo.get(i),info);
+		}
+		int smallestIndex =-1;
+		int smallestVal = 1000000;
+		for(int i=0;i<returnVals.length;i++)
+		{
+			if(returnVals[i]<smallestVal && returnVals[i]<5)
+			{
+				smallestIndex=i;
+				smallestVal = returnVals[i];
+			}
+		}
+		if(smallestIndex ==-1)
+		{
+			return null;
+		}
+		return busStops.get(smallestIndex);
 	}
 	
 	public String getBusInfo(LatLonPoint location)
@@ -1064,5 +1092,36 @@ public class RedRoute
 		route.add(new LatLonPoint(38.94503711572078,-77.0943421125412));
 		route.add(new LatLonPoint(38.94498079137141,-77.0943421125412));
 		route.add(new LatLonPoint(38.94495210765779,-77.09434278309345));
+	}
+	
+	public int stringCompare(String a, String b)
+	{
+		Log.e("size a",a.length()+"");
+		Log.e("size b",b.length()+"");
+		char[] aArr = a.toCharArray();
+		char[] bArr = b.toCharArray();
+	
+		int returnVal =0;
+		if(aArr.length<= bArr.length)
+		{
+			for(int i=0;i<aArr.length;i++)
+			{
+				if(aArr[i] != bArr[i])
+				{
+					returnVal++;
+				}
+			}
+		}
+		else
+		{
+			for(int i=0;i<bArr.length;i++)
+			{
+				if(aArr[i] != bArr[i])
+				{
+					returnVal++;
+				}
+			}
+		}
+		return returnVal;
 	}
 }
