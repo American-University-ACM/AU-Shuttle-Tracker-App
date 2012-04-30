@@ -8,19 +8,30 @@ import edu.american.student.util.LatLonPair;
 import edu.american.student.util.LatLonPoint;
 
 
-
+/**
+ * This is an object containing everything you might want to know about the Blue Route
+ * @author Cam Cook
+ *
+ */
 public class BlueRoute 
 {
-	ArrayList<LatLonPoint> route = new ArrayList<LatLonPoint>();
-	ArrayList<String> busStopInfo = new ArrayList<String>();
-	ArrayList<LatLonPoint> stops = new ArrayList<LatLonPoint>();
+	ArrayList<LatLonPoint> route = new ArrayList<LatLonPoint>();// A definition of the route
+	ArrayList<String> busStopInfo = new ArrayList<String>(); //bus stop info
+	ArrayList<LatLonPoint> stops = new ArrayList<LatLonPoint>(); //bus stop definitions
 	
+	/**
+	 * On init, the routes,stops and stop info is created
+	 */
 	public BlueRoute()
 	{
 		createRoute();
 		createBusStops();
 	}
 	
+	/**
+	 * returns the route definitions
+	 * @return the route definitions
+	 */
 	public ArrayList<LatLonPair> returnRoute()
 	{
 		ArrayList<LatLonPair> toReturn= new ArrayList<LatLonPair>();
@@ -30,6 +41,12 @@ public class BlueRoute
 		}
 		return toReturn;
 	}
+	
+	/**
+	 * Given an info string, return the stop most closely following that form
+	 * @param info the info of the stop
+	 * @return the stop that is closest to that info
+	 */
 	public LatLonPoint getBusFromInfo(String info)
 	{
 
@@ -55,6 +72,11 @@ public class BlueRoute
 		}
 		return stops.get(smallestIndex);
 	}
+	
+	/**
+	 * This method populates the bus stops definition.<br>
+	 * Notice that shared stops are commented out because they are in the SharedRoute object
+	 */
 	private void createBusStops()
 	{
 		stops.add(new LatLonPoint(38.935194277922896,-77.09069967269897));
@@ -79,6 +101,10 @@ public class BlueRoute
 		busStopInfo.add("Ward Building (Metrobus stop on Nebraska Ave. outside of Ward Building)");
 		
 	}
+
+	/**
+	 * This method populates the route defintion, line by line
+	 */
 	private void createRoute()
 	{
 		route.add(new LatLonPoint(38.93519010517121,-77.090705037117));
@@ -266,7 +292,11 @@ public class BlueRoute
 		
 	}
 
-
+	/**
+	 * given a location, return the info on that busStop
+	 * @param location the location of the busStop
+	 * @return the info of that busStop
+	 */
 	public String getBusInfo(LatLonPoint location)
 	{
 		int j=-1;
@@ -283,15 +313,24 @@ public class BlueRoute
 		}
 		return "Unknown Stop";
 	}
+	
+	/**
+	 * Returns the busStop definitions
+	 * @return the busStop definitions
+	 */
 	public ArrayList<LatLonPoint> returnBusStops()
 	{
 		return stops;
 	}
 	
+	/**
+	 * Takes two strings (two info strings) and rates how alike they are char by char
+	 * @param a compare a
+	 * @param b compare b
+	 * @return the rating
+	 */
 	public int stringCompare(String a, String b)
 	{
-		Log.e("size a",a.length()+"");
-		Log.e("size b",b.length()+"");
 		char[] aArr = a.toCharArray();
 		char[] bArr = b.toCharArray();
 	

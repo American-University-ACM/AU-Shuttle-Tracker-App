@@ -44,32 +44,44 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+/**
+ * This is the main activity that starts when the icon is clicked
+ * @author Cam Cook
+ *
+ */
 public class AUBusTrackerActivity extends MapActivity 
 {
-	private boolean jamesServer=false;
-	public LatLonPoint clientLocation ;
-	private Location loc;
-	private LocationListener locationListener;
-	private LocationManager locationManager;
-	private HTTPObject httpObject;
-	private ArrayList<String> busXMLResponses= new ArrayList<String>();
-	private ArrayList<String> busXMLResponses2 = new ArrayList<String>();
-	private ArrayList<String> busesOnRoutes= new ArrayList<String>();
-	private ArrayList<Bus> buses = new ArrayList<Bus>();
-	private BlueRoute bRoute = new BlueRoute();
-	private RedRoute rRoute = new RedRoute();
-	private ShareRoute sRoute = new ShareRoute();
-	private final int UPDATE_BUS_ICONS= 0;
-	private final int UPDATE_USER_ICON =1;
-	private final int DISTANCE_THRESHOLD =550;
-	private String ROUTE_SHOWN="blue";
-	private boolean displayRedRoute =true;
-	private boolean displayBlueRoute = true;
-	private Context context;
-	private MapView mapView;
-	private Dialog dialog;
+	private boolean jamesServer=false; //is james's server in use?
+	public LatLonPoint clientLocation ; // a holder for the user's location
+	private Location loc; // a more-primative holder for user's location
+	private LocationListener locationListener; // holds a set of rules for when the location is changed
+	private LocationManager locationManager; // object to grab location
+	private HTTPObject httpObject; // an interface between the activity and internet GET requests
+	private ArrayList<String> busXMLResponses= new ArrayList<String>(); // response from http object (streeteagle server)
+	private ArrayList<String> busXMLResponses2 = new ArrayList<String>();// response from http object (james's server)
+	private ArrayList<String> busesOnRoutes= new ArrayList<String>(); // defines which bus is on what route
+	private ArrayList<Bus> buses = new ArrayList<Bus>(); //holds a tiny db of the buses with their info
+	private BlueRoute bRoute = new BlueRoute();// object containing all the blue route (except shared routes)
+	private RedRoute rRoute = new RedRoute(); // object containing all the red route (except shared routes)
+	private ShareRoute sRoute = new ShareRoute(); // object containing all the shared routes
+	private final int UPDATE_BUS_ICONS= 0; //used for the handler
+	private final int UPDATE_USER_ICON =1; // used for the handler
+	private final int DISTANCE_THRESHOLD =550; // how far away (in GeoPoint terms) should a bus be away from the route
+											 //before its considered not on route?
+	private String ROUTE_SHOWN="blue"; // a superficial holder corresponding to displayColorRoute boolean
+	private boolean displayRedRoute =true; // is the Red Route displayed?
+	private boolean displayBlueRoute = true; // is the Blue Route displayed?
+	private Context context; // application context
+	private MapView mapView; // the mapview object
+	private Dialog dialog; // holds the dialog for the stops button
 	
-    /** Called when the activity is first created. */
+	/**
+	 * this method sets the context,<br>
+	 * gets the clients location <br>
+	 * sets up the Map View <br>
+	 * sets up the Menu bar (right pane) <br>
+	 * and calls the server via the HTTPObject to act
+	 */
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -88,6 +100,12 @@ public class AUBusTrackerActivity extends MapActivity
 		}
     }
 
+    /**
+     * This method will apply a gradient to any view from start to end HEX colors
+     * @param id the id found from this.findViewById()
+     * @param start the starting HEX color of the gradient
+     * @param end the end HEX color of the gradient
+     */
     private void setUpGrad(int id, int start, int end)
     {
 	    View layout = findViewById(id);
@@ -99,7 +117,13 @@ public class AUBusTrackerActivity extends MapActivity
 
 	    layout.setBackgroundDrawable(gd);
     }
-    
+
+    /**
+     * this method is called if the STOPS button is clicked.<br>
+     * It opens a dialog and displays the stops depending on which are shown<br>
+     * On an item click, it will center that stop
+     * @param v the default parameter. It will always be a Button object
+     */
     public void displayStops(View v)
     {
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -218,6 +242,12 @@ public class AUBusTrackerActivity extends MapActivity
 
 
     }
+    
+    /**
+     * This method is called if the ABOUT button is clicked <br>
+     * A dialog is opened which simply displays the ABOUT message<br>
+     * @param v the default parameter, it will always be a Button object
+     */
     public void displayAbout(View v)
     {
 		AlertDialog.Builder adb= new AlertDialog.Builder(this);
@@ -246,6 +276,11 @@ public class AUBusTrackerActivity extends MapActivity
 		adb.setPositiveButton("OK", null);
 		adb.show();
     }
+    
+    /**
+     * This method calls the location manager to get new updates (updates loc)
+     * @return the primative Location object
+     */
     private Location getLocation() 
     {
 
@@ -255,6 +290,13 @@ public class AUBusTrackerActivity extends MapActivity
             return loc;
     }
 
+    /**
+     * This method is called when the NEARBY button is called<br>
+     * It will grab the user's location (if available)<br>
+     * Then it will go through the displayed route stops to find one close.<br>
+     * max defines the radius of  square that it looks around
+     * @param v the default parameter, it will always be a Button Object
+     */
     public void displayNearby(View v)
     {
     	try
@@ -302,6 +344,11 @@ public class AUBusTrackerActivity extends MapActivity
     	}
     }
     
+    /**
+     * This method is called by displayNearby(). <br>
+     * It will return an array of BusInfo Strings which describe the stops around the user's location
+     * @return an array list of BusInfo strings
+     */
 	private ArrayList<String> getNearestStops() 
 	{
 		int max = 1000;
@@ -361,6 +408,10 @@ public class AUBusTrackerActivity extends MapActivity
 		return toReturn;
 	}
 
+	/**
+	 * This method is called by onCreate()<br>
+	 * It simply defines everything you see on the right pane
+	 */
 	private void setupMenuBar() 
 	{
       	setUpGrad(R.id.imageView1,0xFEC4C3C5,0xFF616261);
@@ -389,6 +440,10 @@ public class AUBusTrackerActivity extends MapActivity
 		
 	}
 
+	/**
+	 * This method is called by onCreat()<br>
+	 * It defines the process of obtaining the user's location
+	 */
 	private void getClientLocation()
 	{
 		// Acquire a reference to the system Location Manager
@@ -418,6 +473,12 @@ public class AUBusTrackerActivity extends MapActivity
 		
 	}
 
+	/**
+	 * This method is called when the left bus icon is clicked<br>
+	 * If Blue is displayed, it turns red.<br>
+	 * If Red is displayed, it turns blue
+	 * @param v the default parameter, it will always be a Button Object
+	 */
 	public void onSwitchRouteButtonClick(View v)
 	{
 		if(ROUTE_SHOWN.equals("blue"))
@@ -462,6 +523,12 @@ public class AUBusTrackerActivity extends MapActivity
 		outline2.setBackgroundColor(Color.RED);
 		handler.sendEmptyMessage(UPDATE_BUS_ICONS);
 	}
+	
+	/**
+	 * This method calls httpObject to grab new XML from the server.<br>
+	 * It will switch between StreetEagle and James's server when necessary
+	 * @throws IOException if the URLs are wrong
+	 */
 	private void runBusLocationListener() throws IOException 
 	{
 		
@@ -514,6 +581,10 @@ public class AUBusTrackerActivity extends MapActivity
 		
 	}
 
+	/**
+	 * This method is called by onCreate()<br>
+	 * It simply defines the mapview by drawing the routes and stops
+	 */
 	private void setupMapView() 
 	{
 		mapView = (MapView) findViewById(R.id.mapview);
@@ -530,6 +601,11 @@ public class AUBusTrackerActivity extends MapActivity
         addMapPoint(sRoute.getMetroIcon(),context.getResources().getDrawable(R.drawable.metro),"Metro Info:","Unknown");
 	}
 	
+	/**
+	 * This method will draw the busStops
+	 * @param busStops the arrayList which defines the lat,long of each bus
+	 * @param color the superficial color of the bus to be painted
+	 */
 	private void drawBusStops(ArrayList<LatLonPoint> busStops,int color)
 	{
 		if(color == Color.RED)
@@ -555,6 +631,12 @@ public class AUBusTrackerActivity extends MapActivity
 			}
 		}
 	}
+	
+	/**
+	 * This method will draw routes
+	 * @param route a definition of each point to draw to and from (as a line)
+	 * @param color the color of the route
+	 */
 	private void drawPath(ArrayList<LatLonPair> route,int color) 
 	{
 		for(int i=0;i<route.size();i++)
@@ -564,6 +646,13 @@ public class AUBusTrackerActivity extends MapActivity
 		
 	}
 
+	/**
+	 * This is called by the smarter drawPath()<br>
+	 * It will draw a line from start to end and color it with color
+	 * @param start the start of the line
+	 * @param end the end of the line
+	 * @param color the color of the line
+	 */
 	private void drawPath(LatLonPoint start, LatLonPoint end, int color)
 	{
 		MapView mapView = (MapView) findViewById(R.id.mapview);
@@ -572,6 +661,13 @@ public class AUBusTrackerActivity extends MapActivity
 		
 	}
 	
+	/**
+	 * This method will add an icon at point with resource drawable.
+	 * @param point the location of the icon
+	 * @param drawable the resource of the icon
+	 * @param message1 the top title
+	 * @param message2 the message when clicked
+	 */
 	private void addMapPoint(LatLonPoint point,Drawable drawable,String message1, String message2)
 	{
 		MapView mapView = (MapView) findViewById(R.id.mapview);
@@ -582,6 +678,12 @@ public class AUBusTrackerActivity extends MapActivity
         itemizedoverlay.addOverlay(overlayitem);
         mapOverlays.add(itemizedoverlay);
 	}
+	
+	/**
+	 * This  will clear the mapview of icons and routes
+	 * @param redRoute clear the redRoute?
+	 * @param blueRoute clear the blueRoute?
+	 */
 	public void clearOverlays(boolean redRoute,boolean blueRoute)
 	{
 		MapView mapView = (MapView) findViewById(R.id.mapview);
@@ -606,8 +708,14 @@ public class AUBusTrackerActivity extends MapActivity
 	}
 
 
+	/**
+	 * This badass sucker is the handler. It is used to interact with the GUI Thread by othe threads<br>
+	 * Namely, the runBusListener Thread<br>
+	 * It is where all the XML parsing and putting bus icons happens
+	 */
 	private Handler handler = new Handler()
 	{
+
 		@Override
         public void handleMessage(Message msg)
 		{
@@ -968,6 +1076,10 @@ public class AUBusTrackerActivity extends MapActivity
 	};
 	
 	
+	/**
+	 * This method uses an HTTP Object to obtain metro info
+	 * @return a string containg metro info
+	 */
 	public String  getMetroTimes()
 	{
 		String info = getMetroInfo();
@@ -1014,6 +1126,11 @@ public class AUBusTrackerActivity extends MapActivity
 		
 		return toReturn2;
 	}
+	
+	/** This method uses an HTTP Object to obtain metro info
+	 * 
+	 * @return metro info
+	 */
 	public String getMetroInfo()
 	{
 		//http://wmata.com/rider_tools/pids/showpid.cfm?station_id=10
@@ -1058,6 +1175,11 @@ public class AUBusTrackerActivity extends MapActivity
 		return toReturnString;
 	}
 
+	/**
+	 * used by the metro info function<br>
+	 * @param toTest String to test
+	 * @return is it a number?
+	 */
 	public boolean isNumber(String toTest)
 	{
 		try
@@ -1072,6 +1194,9 @@ public class AUBusTrackerActivity extends MapActivity
 		return false;
 	}
 	@Override
+	/**
+	 * do not edit
+	 */
 	protected boolean isRouteDisplayed() 
 	{
 		// TODO Auto-generated method stub

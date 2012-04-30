@@ -9,13 +9,24 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
 
+/**
+ * Route overlay provides a way to define lines on the mapview
+ * @author Cam Cook
+ *
+ */
 public class RouteOverlay extends Overlay 
 {
 
-    private GeoPoint gp1;
-    private GeoPoint gp2;
-    private int color;
+    private GeoPoint gp1;// start point
+    private GeoPoint gp2;// end point
+    private int color; //color of the line
     
+    /**
+     * Initializes a new line
+     * @param gp1 start point
+     * @param gp2 end point 
+     * @param color color of the line
+     */
     public RouteOverlay(GeoPoint gp1, GeoPoint gp2, int color)
     {
         this.gp1 = gp1;

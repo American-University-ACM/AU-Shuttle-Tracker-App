@@ -13,16 +13,25 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+/**
+ * This method acts as an interface between the internet and the app
+ * @author Cam Cok
+ * 
+ * 
+**/
 public class HTTPObject 
 {
 	private String URL = "http://busdata.streeteagleweb.com/Service.svc";
 	private String COMMAND = "POST";
-	private String SAVE_FILE = "/home/cam/Desktop/testXML.xml";
 	
 	public HTTPObject() throws IOException
 	{
 
 	}
+	
+	/**
+	 * update contacts StreetEagle 
+	 **/
 	public ArrayList<String> update() throws Exception
 	{
 		URL url = new URL(URL);
@@ -76,6 +85,12 @@ public class HTTPObject
 		reader.close();
 		return toReturnList;
 	}
+
+	/**
+	 * update2 contacts james's server
+	 * @return
+	 * @throws IOException
+	 */
 	public ArrayList<String> update2() throws IOException
 	{
 		ArrayList<String>returnArray = new ArrayList<String>();
@@ -91,6 +106,12 @@ public class HTTPObject
         in.close();
 		return returnArray;
 	}
+	
+	/**
+	 * updateMetroInfo contacts metro servers
+	 * @return
+	 * @throws IOException
+	 */
 	public ArrayList<String> updateMetroInfo() throws IOException
 	{
 		ArrayList<String> returnArray = new ArrayList<String>();

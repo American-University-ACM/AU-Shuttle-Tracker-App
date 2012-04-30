@@ -7,18 +7,30 @@ import android.util.Log;
 import edu.american.student.util.LatLonPair;
 import edu.american.student.util.LatLonPoint;
 
+/**
+ * This holds all the info on Shared Route between Red and Blue
+ * @author Cam Cook
+ *
+ */
 public class ShareRoute 
 {
-	ArrayList<LatLonPoint> route = new ArrayList<LatLonPoint>();
-	ArrayList<LatLonPoint> busStops = new ArrayList<LatLonPoint>();
-	ArrayList<String> busStopInfo = new ArrayList<String>();
+	ArrayList<LatLonPoint> route = new ArrayList<LatLonPoint>();// route definitions
+	ArrayList<LatLonPoint> busStops = new ArrayList<LatLonPoint>();// busStop definitions
+	ArrayList<String> busStopInfo = new ArrayList<String>();//busStop info
 
+	/**
+	 * On init, populate stops and route
+	 */
 	public ShareRoute()
 	{
 		createBusStops();
 		createRoute();
 	}
-	
+	/**
+	 * From an info string, take a best guess as to the bus info is describing
+	 * @param info the info string
+	 * @return the lat lon point of the bus stop that best describes it
+	 */
 	public LatLonPoint getBusFromInfo(String info)
 	{
 		//Forced fix
@@ -62,10 +74,20 @@ public class ShareRoute
 		return busStops.get(smallestIndex);
 	}
 	
+	/**
+	 * returns the metro Icon point
+	 * @return
+	 */
 	public LatLonPoint getMetroIcon()
 	{
 		return new LatLonPoint(38.948091080112015,-77.07910716533661);
 	}
+	
+	/**
+	 * From a location, descibe the bus stop there
+	 * @param location the bus stop location
+	 * @return the info of that bus stop
+	 */
 	public String getBusInfo(LatLonPoint location)
 	{
 		int j=-1;
@@ -83,6 +105,9 @@ public class ShareRoute
 		return "Unknown Stop";
 	}
 	
+	/**
+	 * populates bus stops and its info (order is important)
+	 */
 	public void createBusStops()
 	{
 		//TODO bug
@@ -98,10 +123,21 @@ public class ShareRoute
 		busStopInfo.add("Van Ness toward Metro (upon request)");
 		busStopInfo.add("Van Ness toward Campus (upon request)");
 	}
+	
+	
+	/**
+	 * Here as a place holder, Lets say White(Super) route is implemented<br>
+	 * It would go here.
+	 */
 	public void createRoute()
 	{
 		
 	}
+	
+	/**
+	 * Returns the route definitions
+	 * @return the route definitions
+	 */
 	public ArrayList<LatLonPair> returnRoute()
 	{
 		ArrayList<LatLonPair> toReturn= new ArrayList<LatLonPair>();
@@ -111,10 +147,22 @@ public class ShareRoute
 		}
 		return toReturn;
 	}
+	
+	/**
+	 * return the bus stop definitions
+	 * @return the bus stop definitions
+	 */
 	public ArrayList<LatLonPoint> returnBusStops()
 	{
 		return busStops;
 	}
+	
+	/**
+	 * This method compares string a and string b and rates its closeness char-by-char
+	 * @param a string a
+	 * @param b string b
+	 * @return the rating of the comparison
+	 */
 	public int stringCompare(String a, String b)
 	{
 		Log.e("size a",a.length()+"");

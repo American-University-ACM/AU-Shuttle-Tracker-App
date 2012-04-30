@@ -5,6 +5,11 @@ import com.google.android.maps.GeoPoint;
 
 
 
+/**
+ * Simply holds two lat longs
+ * @author cam
+ *
+ */
 public class LatLonPair 
 {
 

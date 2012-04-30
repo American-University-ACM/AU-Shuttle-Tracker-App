@@ -2,16 +2,14 @@ package edu.american.student;
 
 import edu.american.student.util.LatLonPoint;
 
+/**
+ * This is an class which holds bus status. Its not quite used much
+ * @author Cam Cook
+ *
+ */
 public class Bus 
 {
 
-	/*				int ADDRESS_NEXT=0;
-				int TIME_CHECKED_NEXT =1;
-				int LAT_NEXT =2;
-				int LONGI_NEXT=3;
-				int NAME_NEXT =4;
-				int SPEED_NEXT= 5;
-				int STATUS_NEXT =6;*/
 	public LatLonPoint location;
 	public int speed= -1;
 	public String status="Unknown";

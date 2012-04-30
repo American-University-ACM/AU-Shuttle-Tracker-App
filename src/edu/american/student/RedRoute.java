@@ -7,20 +7,32 @@ import android.util.Log;
 import edu.american.student.util.LatLonPair;
 import edu.american.student.util.LatLonPoint;
 
+/**
+ * This class holds all info on the Red Route
+ * @author Cam Cook
+ *
+ */
 public class RedRoute 
 {
 
-	ArrayList<LatLonPoint> route = new ArrayList<LatLonPoint>();
-	ArrayList<LatLonPoint> busStops = new ArrayList<LatLonPoint>();
-	ArrayList<String> busStopInfo = new ArrayList<String>();
+	ArrayList<LatLonPoint> route = new ArrayList<LatLonPoint>();// route defintions
+	ArrayList<LatLonPoint> busStops = new ArrayList<LatLonPoint>();// bus stop definitions 
+	ArrayList<String> busStopInfo = new ArrayList<String>(); // bus stop info
 	
+	/**
+	 * On init, it populates the route and busStops
+	 */
 	public RedRoute()
 	{
 		createRoute();
 		createBusStops();
 	}
 	
-	
+	/**
+	 * From an info string it returns the bus stop location closest to that info
+	 * @param info the info string
+	 * @return the bus location closest to that info
+	 */
 	public LatLonPoint getBusFromInfo(String info)
 	{
 		int[] returnVals = new int[busStopInfo.size()];
@@ -46,6 +58,11 @@ public class RedRoute
 		return busStops.get(smallestIndex);
 	}
 	
+	/**
+	 * From a location, it returns the info of that stop
+	 * @param location the location of the stop
+	 * @return the info on that stop
+	 */
 	public String getBusInfo(LatLonPoint location)
 	{
 		int j=-1;
@@ -62,6 +79,11 @@ public class RedRoute
 		}
 		return "Unknown Stop";
 	}
+
+	/**
+	 * Defines the bus stops<br>
+	 * Notice that the shared routes are commented out (see SharedRoute)
+	 */
 	private void createBusStops() 
 	{
 		busStops.add(new LatLonPoint(38.938398878723234,-77.086740732193));
@@ -87,6 +109,10 @@ public class RedRoute
 		busStopInfo.add("Yuma St. (Metrobus stop at 49th and Yuma Sts.)");
 	}
 
+	/**
+	 * returns the route definitions
+	 * @return the route definitions
+	 */
 	public ArrayList<LatLonPair> returnRoute()
 	{
 		ArrayList<LatLonPair> toReturn= new ArrayList<LatLonPair>();
@@ -96,10 +122,19 @@ public class RedRoute
 		}
 		return toReturn;
 	}
+
+	/**
+	 * returns busStop definitions
+	 * @return busStop definitions
+	 */
 	public ArrayList<LatLonPoint> returnBusStops()
 	{
 		return busStops;
 	}
+
+	/**
+	 * populates the route definitions
+	 */
 	private void createRoute()
 	{
 		route.add(new LatLonPoint(38.94492342393254,-77.09434077143669));
@@ -1094,6 +1129,12 @@ public class RedRoute
 		route.add(new LatLonPoint(38.94495210765779,-77.09434278309345));
 	}
 	
+	/**
+	 * Compares two info strings for closeness char by char
+	 * @param a compare a
+	 * @param b compare b
+	 * @return rating of closeness
+	 */
 	public int stringCompare(String a, String b)
 	{
 		Log.e("size a",a.length()+"");
