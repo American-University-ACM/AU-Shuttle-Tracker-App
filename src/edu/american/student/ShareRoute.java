@@ -114,7 +114,7 @@ public class ShareRoute
 		busStops.add(new LatLonPoint(38.93895799996236,-77.08491683006287));
 		busStops.add(new LatLonPoint(38.9456587666782,-77.07915544509888));
 		busStops.add(new LatLonPoint(38.94522486322879,-77.07975625991821));
-		busStops.add(new LatLonPoint(38.94290510358263,-77.08174109458923));;
+		busStops.add(new LatLonPoint(38.94328895394465,-77.08104372024536));;
 		busStops.add(new LatLonPoint(38.94299689407566,-77.08176255226135));
 		
 		busStopInfo.add("Nebraska Hall (Metrobus stop on Nebraska Ave. across from Nebraska Hall)");

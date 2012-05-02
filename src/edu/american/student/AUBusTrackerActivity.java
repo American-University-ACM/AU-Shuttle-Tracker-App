@@ -324,9 +324,60 @@ public class AUBusTrackerActivity extends MapActivity
         
         	ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringArray);
         	modeList.setAdapter(modeAdapter);
+        	modeList.setOnItemClickListener(new OnItemClickListener(){
 
+    			@Override
+    			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+    					long arg3)
+    			{
+    				//doesnt understand the shared routes
+    				String a = (String)arg0.getItemAtPosition(arg2);
+    				try
+    				{
+    					a=a.split(": ")[1];
+    				}catch(Exception e)
+    				{
+    					
+    				}
+    				LatLonPoint routePoint=sRoute.getBusFromInfo(a);
+    				if(displayRedRoute && !displayBlueRoute)
+    				{
+    					if(routePoint == null)
+    					{
+    						routePoint=rRoute.getBusFromInfo(a);
+    					}
+    				}
+    				if(displayBlueRoute && !displayRedRoute)
+    				{
+    					if(routePoint == null)
+    					{
+    						routePoint=bRoute.getBusFromInfo(a);
+    					}
+    				}
+    				if(displayBlueRoute && displayRedRoute)
+    				{
+    					if(routePoint ==null)
+    					{
+    						
+    						routePoint = bRoute.getBusFromInfo(a);
+    					}
+    					if(routePoint == null)
+    					{
+    						routePoint= rRoute.getBusFromInfo(a);
+    					}
+    				}
+
+    				if(routePoint != null)
+    				{
+    		        	MapController mapController = mapView.getController();
+    		        	mapController.setCenter(routePoint);
+    		        	dialog.dismiss();
+    				}
+
+    				
+    			}});
         	builder.setView(modeList);
-        	final Dialog dialog = builder.create();
+        	dialog = builder.create();
 
         	dialog.show();
 
@@ -548,7 +599,8 @@ public class AUBusTrackerActivity extends MapActivity
 							//Log.e("JAMES SERVER",busXMLResponses2.get(i));
 						}
 						handler.sendEmptyMessage(UPDATE_BUS_ICONS);
-						wait(120000);
+						Thread.sleep(120000);
+						//wait(120000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

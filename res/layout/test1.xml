@@ -74,13 +74,13 @@
                 android:id="@+id/stopsButton"
                 android:layout_width="match_parent"
                 android:onClick="displayStops"
-                android:layout_height="68dp"
+                android:layout_height="wrap_content"
                 android:src="@drawable/stops" />
 
             <ImageButton
                 android:id="@+id/nearbyButton"
                 android:layout_width="wrap_content"
-                android:layout_height="68dp"
+                android:layout_height="wrap_content"
                 android:onClick="displayNearby"
                 android:src="@drawable/nearby" />
 
